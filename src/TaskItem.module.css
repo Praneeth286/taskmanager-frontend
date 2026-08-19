@@ -1,0 +1,15 @@
+.taskItem {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 10px;
+border-bottom: 1px solid #eee;
+}
+.deleteButton {
+background-color: #d9534f;
+padding: 4px 10px;
+font-size:12x;
+}
+.deleteButton:hover{
+background-color: #c9302c;
+}

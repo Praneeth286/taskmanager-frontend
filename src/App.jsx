@@ -1,80 +1,63 @@
 import './App.css';
-import { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import TasksPage from './pages/TasksPage';
+import AboutPage from './pages/AboutPage';
+import { ThemeProvider, useTheme } from './ThemeContext';
+import useTasks from './useTasks';
+import{useCallback} from 'react';
 
 function App() {
-  const [tasks, setTasks] = useState([]);
-  const [taskTitle, setTaskTitle] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  return (
+    <ThemeProvider>
+      <BrowserRouter>
+        <AppContent />
+      </BrowserRouter>
+    </ThemeProvider>
+  );
+}
 
-  useEffect(() => {
-    fetch('http://localhost:8080/tasks')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to load tasks');
-        }
-        return response.json();
-      })
-      .then(data => {
-        setTasks(data);
-        setIsLoading(false);
-      })
-      .catch(err => {
-        setError(err.message);
-        setIsLoading(false);
-      });
-  }, []);
-
-  function handleAddTask() {
-    fetch('http://localhost:8080/tasks', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: taskTitle })
-    })
-      .then(response => response.json())
-      .then(newTask => {
-        setTasks([...tasks, newTask]);
-        setTaskTitle('');
-      });
-  }
-
-  function handleDeleteTask(id) {
-    fetch(`http://localhost:8080/tasks/${id}`, {
-      method: 'DELETE'
-    }).then(() => {
-      setTasks(tasks.filter(task => task.id !== id));
-    });
-  }
+function AppContent() {
+  const { theme, toggleTheme } = useTheme();
+  const { tasks, isLoading, error, addTask, deleteTask } = useTasks();
+  const handleAddTask = useCallback((title) => {
+      addTask(title);
+      }, [addTask]);
 
   return (
-    <div className="app-container">
-      <h1>Task Manager</h1>
+    <div className={`app-container ${theme}`}>
+      <nav>
+        <Link to="/">Tasks ({tasks.length})</Link>
+        {' | '}
+        <Link to="/about">About</Link>
+      </nav>
 
-      <div className="task-input-row">
-        <input
-          type="text"
-          value={taskTitle}
-          onChange={(e) => setTaskTitle(e.target.value)}
-          placeholder="Enter a task"
+      <ThemeToggleButton />
+
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <TasksPage
+              tasks={tasks}
+              isLoading={isLoading}
+              error={error}
+              addTask={addTask}
+              deleteTask={deleteTask}
+            />
+          }
         />
-        <button onClick={handleAddTask}>Add Task</button>
-      </div>
-
-      {isLoading && <p>Loading tasks...</p>}
-
-      {error && <p className="error-message">Error: {error}</p>}
-
-      {!isLoading && !error && (
-        <ul>
-          {tasks.map((task) => (
-            <li key={task.id}>
-              {task.title}
-              <button onClick={() => handleDeleteTask(task.id)}>Delete</button>
-            </li>
-          ))}
-        </ul>
-      )}
+        <Route path="/about" element={<AboutPage />} />
+      </Routes>
     </div>
+  );
+}
+
+function ThemeToggleButton() {
+  const { theme, toggleTheme } = useTheme();
+  return (
+    <button onClick={toggleTheme}>
+      Current theme: {theme} (click to toggle)
+    </button>
   );
 }
 

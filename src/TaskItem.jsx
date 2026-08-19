@@ -1,8 +1,12 @@
-function TaskItem(props){
+import styles from './TaskItem.module.css';
+function TaskItem({task, onDelete}){
     return(
-        <div>
-            <span>{props.title}</span>
-            </div>
-            );
-        }
-    export default TaskItem;
+        <li className={styles.taskItem}>
+            {task.title}
+            <button className={styles.deleteButton} onClick={()=> onDelete(task.id)}>
+                Delete
+                </button>
+            </li>
+                );
+            }
+        export default TaskItem;

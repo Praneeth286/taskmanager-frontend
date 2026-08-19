@@ -59,3 +59,44 @@ background color:#c9302c;
   color: #d9534f;
   font-weight: bold;
 }
+.app-container.dark {
+  background-color: #1e1e1e;
+  color: #f4f4f4;
+}
+
+.app-container.dark input,
+.app-container.dark button {
+  background-color: #333;
+  color: #f4f4f4;
+  border-color: #555;
+}
+@media(max-width: 600px) {
+body {
+padding:12px;
+}
+.app-container{
+padding:16px;
+border-radius: 0;
+}
+h1{
+font-size: 20px;
+}
+.task-input-row{
+flex-direction: column;
+}
+input[type="text"]{
+width: 100%;
+box-sizing: border-box;
+}
+button{
+width: 100%;
+}
+li{
+flex-direction: column;
+align-items: flex-start;
+gap: 6px;
+}
+li button{
+width:auto;
+}
+}
