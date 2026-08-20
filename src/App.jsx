@@ -5,13 +5,19 @@ import AboutPage from './pages/AboutPage';
 import { ThemeProvider, useTheme } from './ThemeContext';
 import useTasks from './useTasks';
 import{useCallback} from 'react';
+import { AuthProvider } from './AuthContext';
+import LoginPage from './pages/LoginPage';
+import ProtectedRoute from './ProtectedRoute';
+import {useAuth} from './AuthContext';
 
 function App() {
   return (
     <ThemeProvider>
+        <AuthProvider>
       <BrowserRouter>
         <AppContent />
       </BrowserRouter>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
@@ -19,6 +25,7 @@ function App() {
 function AppContent() {
   const { theme, toggleTheme } = useTheme();
   const { tasks, isLoading, error, addTask, deleteTask } = useTasks();
+  const { isAuthenticated, logout} = useAuth();
   const handleAddTask = useCallback((title) => {
       addTask(title);
       }, [addTask]);
@@ -29,6 +36,12 @@ function AppContent() {
         <Link to="/">Tasks ({tasks.length})</Link>
         {' | '}
         <Link to="/about">About</Link>
+        {isAuthenticated && (
+                  <>
+                    {' | '}
+                    <button onClick={logout}>Log Out</button>
+                  </>
+                )}
       </nav>
 
       <ThemeToggleButton />
@@ -37,6 +50,7 @@ function AppContent() {
         <Route
           path="/"
           element={
+              <ProtectedRoute>
             <TasksPage
               tasks={tasks}
               isLoading={isLoading}
@@ -44,9 +58,11 @@ function AppContent() {
               addTask={addTask}
               deleteTask={deleteTask}
             />
+            </ProtectedRoute>
           }
         />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/login" element={<LoginPage/>} />
       </Routes>
     </div>
   );
