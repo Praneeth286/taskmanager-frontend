@@ -9,6 +9,7 @@ import { AuthProvider } from './AuthContext';
 import LoginPage from './pages/LoginPage';
 import ProtectedRoute from './ProtectedRoute';
 import {useAuth} from './AuthContext';
+import RegisterPage from './pages/RegisterPage';
 
 function App() {
   return (
@@ -61,6 +62,7 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+        <Route path="/register" element={<RegisterPage/>}/>
         <Route path="/about" element={<AboutPage />} />
         <Route path="/login" element={<LoginPage/>} />
       </Routes>
